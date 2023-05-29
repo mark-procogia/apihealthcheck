@@ -1,2 +1,6 @@
 ^apihealthcheck\.Rproj$
 ^\.Rproj\.user$
+^data-raw$
+^plan\.Rmd$
+^README\.Rmd$
+^LICENSE\.md$

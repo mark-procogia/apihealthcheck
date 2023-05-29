@@ -1,0 +1,125 @@
+# R Package- anatomy of an R package
+
+```{r Load libraries}
+library(devtools)
+library(fs)
+```
+
+## Folder structure
+
+What are the files and folders in the package?
+
+```{r Show folder structure}
+dir_tree(all = TRUE, recurse = 1)
+```
+
+### `.gitignore`
+
+Git will not track some standard behind-scenes files created by R and RStudio.
+
+### `.Rbuildignore`
+
+`.Rbuildignore` It lists files and directories needed for development but not necessary to end users. It .
+
+**These two "ignore" files have very different syntax!**
+
+`.Rbuildignore` uses [Perl-like **regular expression**](https://cran.r-project.org/doc/manuals/R-exts.html), while `.gitignore` treats a pattern as [**shell glob** suitable for consumption by fnmatch(3) with the FNM_PATHNAME flag](https://www.git-scm.com/docs/gitignore/2.9.5).
+
+Both files ignore the `*/.Rproj.user` folder.
+
+-   `.gitignore`
+
+".Rproj.user"
+
+-   `.Rbuildignore`
+
+"\^.Rproj.user\$"
+
+With the `usethis` package, we can use `use_git_ignore` to write to `.gitignore`, and `use_build_ignore()` to write to `.Rbuildignore`.
+
+```{r Add files that need to be ignored}
+file.create("plan.Rmd") # For my personal use only
+
+use_data_raw() # the data you include in data/ is a cleaned up version of raw data here, typically some data you have gathered from elsewhere. 
+```
+
+```{r `use_git_ignore` and `use_build_ignore`}
+# Both .gitignore and .Rbuildignore files that you only want to keep locally
+use_git_ignore("plan.Rmd")
+use_build_ignore("plan.Rmd")
+
+# .Rbuildignore Rmd file (but not the MD file)
+use_build_ignore("README.Rmd")
+
+# `use_data_raw()` already added "data_raw" to `.Rbuildignore`
+
+```
+
+### `DESCRIPTION`
+
+Metadata about the package. Check with legal for company-Specific requirements!
+
+-   Title: one-line description
+
+-   Description: one-paragraph description
+
+-   [Authors\@R](mailto:Authors@R){.email}: individuals or entities associated with the creation of the package, e.g. author, creator, copyright holder and funder.
+
+-   License: mandatory and machine-readable.
+
+```{r Use MIL license}
+use_mit_license()
+```
+
+
+#### Add dependencies to `DESCRIPTION`
+
+```{r Add import packages}
+use_package("httr")
+```
+
+We will talk more about the difference between "Imports" and "Suggests". 
+
+Don't do the following!
+
+```{r Import tidyverse as dependency, error=TRUE}
+use_package("tidyverse")
+```
+
+- Version: Remember to [bump version](https://github.com/tidyverse/dplyr/releases) before release
+
+```
+Package: apihealthcheck
+Title: Check the health of API endpoints
+Version: 0.0.0.9000
+Authors@R: 
+    c(person("Mark", "Wang", , "mark.wang@procogia.com", role = c("aut", "cre")), 
+    person("Procogia", role = c("cph", "fnd")))
+Description: Many R applications depend use API calls to retrieve and post data.
+    This package helps check the health of API endpoints, thus enables timely
+    detection and diagnosis of API errors. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+```
+
+### `NAMESPACE`
+
+Functions exported for external use, or imported for internal use.
+
+```{r Example of non-exported functions, error=TRUE}
+library(remotes)
+
+remotes:::is.named(mtcars) # Use ":::" to use non-exported function
+
+remotes::is.named(mtcars)
+```
+
+### The `R/` directory
+
+Functions are defined there.
+
+### `regexcite.Rproj`
+
+Make the package folder an R project. 
