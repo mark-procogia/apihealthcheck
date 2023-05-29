@@ -224,3 +224,12 @@ document()
 ```
 
 The `test_api_endpoint` function should also have been added to the `NAMESPACE` file. 
+
+## Make it a Shiny app
+
+### Create Shiny app directory
+
+```{r Make app firectory}
+dir.create("inst")
+dir.create("inst/app")
+```
